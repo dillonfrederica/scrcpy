@@ -552,7 +552,15 @@ sc_input_manager_process_key(struct sc_input_manager *im,
                     open_hard_keyboard_settings(im);
                 }
                 return;
-        }
+            case SDLK_BACKQUOTE:
+                if (control && !down && !paused) {
+                    if (!im->is_gaming) {
+                        im->is_gaming = true;
+                        printf("开启游戏模式\n");
+                    }
+                }
+                return;
+            }
 
         return;
     }
@@ -880,6 +888,48 @@ sc_input_manager_process_mouse_button(struct sc_input_manager *im,
     }
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//                               添加游戏模式                               //
+static void game_common(struct sc_input_manager *im, const SDL_KeyboardEvent *event, Sint32 x, Sint32 y)
+{
+    SDL_MouseButtonEvent button_event;
+    button_event.type = event->type == SDL_KEYDOWN ? SDL_MOUSEBUTTONDOWN : SDL_MOUSEBUTTONUP;
+    button_event.which = 0;
+    button_event.button = SDL_BUTTON_LEFT;
+    button_event.clicks = 1;
+    button_event.x = x;
+    button_event.y = y;
+    sc_input_manager_process_mouse_button(im, &button_event);
+}
+
+static void game_space(struct sc_input_manager *im, const SDL_KeyboardEvent *event)
+{
+    game_common(im, event, 175, 146);
+}
+
+static void sc_input_manager_process_game(struct sc_input_manager *im, const SDL_KeyboardEvent *event)
+{
+    uint16_t mod = event->keysym.mod;
+    uint16_t mods = im->sdl_shortcut_mods;
+    SDL_Keycode sdl_keycode = event->keysym.sym;
+    bool is_shortcut = sc_shortcut_mods_is_shortcut_mod(mods, mod) || sc_shortcut_mods_is_shortcut_key(mods, sdl_keycode);
+
+    if (im->is_gaming == true && is_shortcut && event->type == SDL_KEYUP && event->keysym.sym == SDLK_BACKQUOTE)
+    { // 退出游戏模式
+        printf("退出游戏模式\n");
+        im->is_gaming = false;
+        return;
+    }
+
+    switch (event->keysym.sym)
+    { // 按键映射
+    case SDLK_SPACE:
+        game_space(im, event);
+        break;
+    }
+}
+//////////////////////////////////////////////////////////////////////////////
+
 static void
 sc_input_manager_process_mouse_wheel(struct sc_input_manager *im,
                                      const SDL_MouseWheelEvent *event) {
@@ -1026,7 +1076,11 @@ sc_input_manager_handle_event(struct sc_input_manager *im,
         case SDL_KEYUP:
             // some key events do not interact with the device, so process the
             // event even if control is disabled
-            sc_input_manager_process_key(im, &event->key);
+            if (im->is_gaming) {
+                sc_input_manager_process_game(im, &event->key);
+            } else {
+                sc_input_manager_process_key(im, &event->key);
+            }
             break;
         case SDL_MOUSEMOTION:
             if (!im->mp || paused) {

@@ -515,6 +515,28 @@ connect_to_server(struct sc_server *server, unsigned attempts, sc_tick delay,
     return SC_SOCKET_NONE;
 }
 
+static bool sc_server_read_game_map_file(const char *path, struct sc_server_game_map *game_map)
+{
+    // 一次性读取文件所有内容
+    const char *jsonmsg = sc_file_read(path);
+    if (!jsonmsg)
+    {
+        return false;
+    }
+
+    // 解析JSON
+    cJSON *root = cJSON_Parse(jsonmsg);
+    if (!root)
+    {
+        cJSON_Delete(root);
+        return false;
+    }
+
+    cJSON *arr = cJSON_GetArrayItem(root, 0);
+
+    return false;
+}
+
 bool
 sc_server_init(struct sc_server *server, const struct sc_server_params *params,
               const struct sc_server_callbacks *cbs, void *cbs_userdata) {

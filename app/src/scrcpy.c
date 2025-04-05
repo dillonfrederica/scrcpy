@@ -167,6 +167,7 @@ sdl_configure(bool video_playback, bool disable_screensaver) {
 static enum scrcpy_exit_code
 event_loop(struct scrcpy *s) {
     SDL_Event event;
+    printf("消费事件\n");
     while (SDL_WaitEvent(&event)) {
         switch (event.type) {
             case SC_EVENT_DEVICE_DISCONNECTED:

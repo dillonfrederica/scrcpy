@@ -46,4 +46,12 @@ sc_file_get_local_path(const char *name);
 bool
 sc_file_is_regular(const char *path);
 
+/**
+ * 读取文件
+ * 
+ * @param filename 文件路径
+ * @return 文件内容
+ */
+char* sc_file_read(const char *filename);
+
 #endif

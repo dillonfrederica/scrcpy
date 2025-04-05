@@ -5,6 +5,8 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <SDL2/SDL_keycode.h>
+#include <cjson/cJSON.h>
 
 #include "adb/adb_tunnel.h"
 #include "options.h"
@@ -12,10 +14,42 @@
 #include "util/net.h"
 #include "util/thread.h"
 #include "util/tick.h"
+#include "util/file.h"
 
 #define SC_DEVICE_NAME_FIELD_LENGTH 64
 struct sc_server_info {
     char device_name[SC_DEVICE_NAME_FIELD_LENGTH];
+};
+
+struct sc_server_game_map
+{
+    uint8_t type; // 1 键盘输入; 2 鼠标点击; 3 鼠标移动; 4 鼠标滚轮
+
+    union
+    {
+        SDL_Keycode key_code;
+        Uint8 mouse_button;
+    } key;
+
+    union
+    {
+        struct click
+        { // 点击
+            float x;
+            float y;
+            float radius;
+        };
+
+        struct drag
+        { // 拖拽
+            float x;
+            float y;
+            float radius;
+            uint8_t direction; // 方向 0:上 1:下 2:左 3:右
+        };
+    } *value;
+
+    uint8_t value_size;
 };
 
 struct sc_server_params {

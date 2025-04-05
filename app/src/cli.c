@@ -114,6 +114,7 @@ enum {
     OPT_NO_VD_SYSTEM_DECORATIONS,
     OPT_NO_VD_DESTROY_CONTENT,
     OPT_DISPLAY_IME_POLICY,
+    OPT_GAME_MAP_FILE,
 };
 
 struct sc_option {
@@ -1062,6 +1063,13 @@ static const struct sc_option options[] = {
         .argdesc = "value",
         .text = "Set the initial window height.\n"
                 "Default is 0 (automatic).",
+    },
+    {
+        .longopt_id = OPT_GAME_MAP_FILE,
+        .longopt = "game-map-file",
+        .argdesc = "file",
+        .text = "Set the game map file.\n"
+                "Default is NULL(disabled).",
     },
 };
 
@@ -2820,6 +2828,9 @@ parse_args_with_getopt(struct scrcpy_cli_args *args, int argc, char *argv[],
                                               &opts->display_ime_policy)) {
                     return false;
                 }
+                break;
+            case OPT_GAME_MAP_FILE:
+                opts->game_map_file = optarg;
                 break;
             default:
                 // getopt prints the error message on stderr
