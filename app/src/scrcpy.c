@@ -44,6 +44,7 @@
 #ifdef HAVE_V4L2
 # include "v4l2_sink.h"
 #endif
+#include "game.h"
 
 struct scrcpy {
     struct sc_server server;
@@ -832,6 +833,7 @@ aoa_complete:
             sc_frame_source_add_sink(src, &s->screen.frame_sink);
         }
     }
+    s->screen.im.game = sc_game_init(options->game_map_file);
 
     if (options->audio_playback) {
         sc_audio_player_init(&s->audio_player, options->audio_buffer,

@@ -293,7 +293,7 @@ sc_display_update_texture(struct sc_display *display, const AVFrame *frame) {
 
 enum sc_display_result
 sc_display_render(struct sc_display *display, const SDL_Rect *geometry,
-                  enum sc_orientation orientation) {
+                  enum sc_orientation orientation, const struct sc_game *game) {
     SDL_RenderClear(display->renderer);
 
     if (display->pending.flags) {
@@ -337,6 +337,11 @@ sc_display_render(struct sc_display *display, const SDL_Rect *geometry,
             LOGE("Could not render texture: %s", SDL_GetError());
             return SC_DISPLAY_RESULT_ERROR;
         }
+    }
+
+    if (game != NULL && game->is_gaming && game->show)
+    {
+        sc_game_display(game, display->renderer);
     }
 
     SDL_RenderPresent(display->renderer);

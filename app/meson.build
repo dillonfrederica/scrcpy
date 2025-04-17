@@ -63,6 +63,7 @@ src = [
     'src/util/thread.c',
     'src/util/tick.c',
     'src/util/timeout.c',
+    'src/game.c',
 ]
 
 conf = configuration_data()
@@ -118,6 +119,8 @@ dependencies = [
     dependency('libavutil', static: static),
     dependency('libswresample', static: static),
     dependency('sdl2', version: '>= 2.0.5', static: static),
+    dependency('sdl2_image', version: '>= 2.0.5', static: static),
+    dependency('libcjson', version: '>= 1.7.17', static: static),
 ]
 
 if v4l2_support

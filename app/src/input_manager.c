@@ -552,7 +552,20 @@ sc_input_manager_process_key(struct sc_input_manager *im,
                     open_hard_keyboard_settings(im);
                 }
                 return;
-        }
+            case SDLK_1:
+                if (im->game != NULL && control && !repeat && !down && !paused)
+                {
+                    if (im->game->is_gaming)
+                    {
+                        sc_game_off(im);
+                    }
+                    else
+                    {
+                        sc_game_on(im->game, im->screen->window);
+                    }
+                }
+                return;
+            }
 
         return;
     }
@@ -597,6 +610,12 @@ sc_input_manager_process_key(struct sc_input_manager *im,
 
     enum sc_scancode scancode = sc_scancode_from_sdl(event->keysym.scancode);
     if (scancode == SC_SCANCODE_UNKNOWN) {
+        return;
+    }
+
+    if (im->game != NULL && im->game->is_gaming)
+    { // 处理游戏模式
+        sc_input_manager_process_key_game(im, event);
         return;
     }
 
@@ -1029,6 +1048,12 @@ sc_input_manager_handle_event(struct sc_input_manager *im,
             sc_input_manager_process_key(im, &event->key);
             break;
         case SDL_MOUSEMOTION:
+            if (im->game != NULL && im->game->is_gaming)
+            {
+                sc_input_manager_process_mouse_motion_game(im, &event->motion);
+                break;
+            }
+
             if (!im->mp || paused) {
                 break;
             }
@@ -1042,6 +1067,12 @@ sc_input_manager_handle_event(struct sc_input_manager *im,
             break;
         case SDL_MOUSEBUTTONDOWN:
         case SDL_MOUSEBUTTONUP:
+            if (im->game != NULL && im->game->is_gaming)
+            {
+                sc_input_manager_process_mouse_button_game(im, &event->button);
+                break;
+            }
+
             // some mouse events do not interact with the device, so process
             // the event even if control is disabled
             sc_input_manager_process_mouse_button(im, &event->button);

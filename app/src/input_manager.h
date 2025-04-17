@@ -14,6 +14,7 @@
 #include "trait/gamepad_processor.h"
 #include "trait/key_processor.h"
 #include "trait/mouse_processor.h"
+#include "game.h"
 
 struct sc_input_manager {
     struct sc_controller *controller;
@@ -44,6 +45,8 @@ struct sc_input_manager {
     uint16_t last_mod;
 
     uint64_t next_sequence; // used for request acknowledgements
+
+    struct sc_game *game;
 };
 
 struct sc_input_manager_params {
@@ -67,5 +70,22 @@ sc_input_manager_init(struct sc_input_manager *im,
 void
 sc_input_manager_handle_event(struct sc_input_manager *im,
                               const SDL_Event *event);
+
+/// @brief 处理游戏模式下的输入
+/// @param im
+/// @param event SDL事件
+void sc_input_manager_process_key_game(struct sc_input_manager *im, const SDL_KeyboardEvent *event);
+
+/// @brief 处理游戏模式下的输入
+/// @param im
+/// @param event SDL事件
+void sc_input_manager_process_mouse_button_game(struct sc_input_manager *im, const SDL_MouseButtonEvent *event);
+
+/// @brief 处理游戏模式下的输入
+/// @param im
+/// @param event SDL事件
+void sc_input_manager_process_mouse_motion_game(struct sc_input_manager *im, const SDL_MouseMotionEvent *event);
+
+void sc_game_off(struct sc_input_manager *im);
 
 #endif

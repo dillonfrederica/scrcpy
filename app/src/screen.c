@@ -214,14 +214,14 @@ sc_screen_render(struct sc_screen *screen, bool update_content_rect) {
     }
 
     enum sc_display_result res =
-        sc_display_render(&screen->display, &screen->rect, screen->orientation);
+        sc_display_render(&screen->display, &screen->rect, screen->orientation, screen->im.game);
     (void) res; // any error already logged
 }
 
 static void
 sc_screen_render_novideo(struct sc_screen *screen) {
     enum sc_display_result res =
-        sc_display_render(&screen->display, NULL, SC_ORIENTATION_0);
+        sc_display_render(&screen->display, NULL, SC_ORIENTATION_0, screen->im.game);
     (void) res; // any error already logged
 }
 
